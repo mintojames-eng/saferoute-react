@@ -1,0 +1,274 @@
+{
+  "incidents": [
+    {
+      "id": "1",
+      "name": "Silk Board Junction",
+      "coords": [
+        12.9172,
+        77.6227
+      ],
+      "risk": "High",
+      "type": "Multi-vehicle collision zone",
+      "accidents": 182,
+      "road": "Poor",
+      "traffic": "High"
+    },
+    {
+      "id": "2",
+      "name": "Marathahalli Bridge",
+      "coords": [
+        12.9591,
+        77.7009
+      ],
+      "risk": "Medium",
+      "type": "Traffic snarls",
+      "accidents": 126,
+      "road": "Moderate",
+      "traffic": "High"
+    },
+    {
+      "id": "4",
+      "name": "Electronic City",
+      "coords": [
+        12.8399,
+        77.677
+      ],
+      "risk": "Low",
+      "type": "Clear",
+      "accidents": 61,
+      "road": "Good",
+      "traffic": "Moderate"
+    },
+    {
+      "id": "5",
+      "name": "Koramangala",
+      "coords": [
+        12.9352,
+        77.6245
+      ],
+      "risk": "Medium",
+      "type": "Congestion",
+      "accidents": 89,
+      "road": "Moderate",
+      "traffic": "High"
+    },
+    {
+      "id": "6",
+      "name": "Whitefield",
+      "coords": [
+        12.9698,
+        77.75
+      ],
+      "risk": "Medium",
+      "type": "IT corridor congestion",
+      "accidents": 110,
+      "road": "Poor",
+      "traffic": "High"
+    },
+    {
+      "id": "7",
+      "name": "Jayanagar",
+      "coords": [
+        12.9299,
+        77.5824
+      ],
+      "risk": "Low",
+      "type": "Clear",
+      "accidents": 45,
+      "road": "Good",
+      "traffic": "Moderate"
+    },
+    {
+      "id": "8",
+      "name": "Majestic Area",
+      "coords": [
+        12.9767,
+        77.5713
+      ],
+      "risk": "High",
+      "type": "Traffic gridlock",
+      "accidents": 142,
+      "road": "Poor",
+      "traffic": "Very High"
+    },
+    {
+      "id": "9",
+      "name": "Agara Junction",
+      "coords": [
+        12.9234,
+        77.6483
+      ],
+      "risk": "High",
+      "type": "Multi-vehicle collision",
+      "accidents": 138,
+      "road": "Poor",
+      "traffic": "High"
+    },
+    {
+      "id": "10",
+      "name": "Airport Road",
+      "coords": [
+        12.9592,
+        77.6492
+      ],
+      "risk": "Medium",
+      "type": "Traffic snarls",
+      "accidents": 95,
+      "road": "Moderate",
+      "traffic": "High"
+    },
+    {
+      "id": "11",
+      "name": "Bellandur",
+      "coords": [
+        12.9255,
+        77.6761
+      ],
+      "risk": "High",
+      "type": "Severe congestion",
+      "accidents": 167,
+      "road": "Poor",
+      "traffic": "Very High"
+    },
+    {
+      "id": "12",
+      "name": "KR Puram",
+      "coords": [
+        13.0078,
+        77.6963
+      ],
+      "risk": "High",
+      "type": "Highway merge collision",
+      "accidents": 145,
+      "road": "Moderate",
+      "traffic": "High"
+    },
+    {
+      "id": "13",
+      "name": "Banashankari",
+      "coords": [
+        12.9254,
+        77.5467
+      ],
+      "risk": "Medium",
+      "type": "Traffic snarls",
+      "accidents": 78,
+      "road": "Moderate",
+      "traffic": "Moderate"
+    },
+    {
+      "id": "14",
+      "name": "Yeshwanthpur Circle",
+      "coords": [
+        13.0279,
+        77.5409
+      ],
+      "risk": "High",
+      "type": "Heavy truck traffic bottleneck",
+      "accidents": 133,
+      "road": "Poor",
+      "traffic": "High"
+    },
+    {
+      "id": "15",
+      "name": "Indiranagar 100ft Rd",
+      "coords": [
+        12.9783,
+        77.6408
+      ],
+      "risk": "Medium",
+      "type": "Congestion",
+      "accidents": 82,
+      "road": "Good",
+      "traffic": "High"
+    },
+    {
+      "id": "16",
+      "name": "HSR Layout",
+      "coords": [
+        12.9116,
+        77.6474
+      ],
+      "risk": "Low",
+      "type": "Clear",
+      "accidents": 38,
+      "road": "Good",
+      "traffic": "Low"
+    },
+    {
+      "id": "17",
+      "name": "Yelahanka",
+      "coords": [
+        13.1007,
+        77.5963
+      ],
+      "risk": "Medium",
+      "type": "Pedestrian crossing risks",
+      "accidents": 72,
+      "road": "Moderate",
+      "traffic": "Moderate"
+    },
+    {
+      "id": "18",
+      "name": "Rajajinagar",
+      "coords": [
+        13.004,
+        77.5555
+      ],
+      "risk": "Low",
+      "type": "Clear",
+      "accidents": 41,
+      "road": "Good",
+      "traffic": "Low"
+    },
+    {
+      "id": "19",
+      "name": "MG Road",
+      "coords": [
+        12.9756,
+        77.6066
+      ],
+      "risk": "Medium",
+      "type": "Peak hour congestion",
+      "accidents": 94,
+      "road": "Good",
+      "traffic": "High"
+    },
+    {
+      "id": "20",
+      "name": "BTM Layout",
+      "coords": [
+        12.9166,
+        77.6101
+      ],
+      "risk": "Medium",
+      "type": "Two-wheeler accidents",
+      "accidents": 88,
+      "road": "Moderate",
+      "traffic": "High"
+    }
+  ],
+  "dashboardStats": [
+    {
+      "id": "1",
+      "totalAccidents": 2481,
+      "highRiskAreas": 24,
+      "poorRoadConditions": 31,
+      "confidenceScore": 78,
+      "monthlyTrend": [
+        120,
+        190,
+        150,
+        210,
+        180,
+        240
+      ],
+      "riskSegments": [
+        25,
+        45,
+        30
+      ]
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

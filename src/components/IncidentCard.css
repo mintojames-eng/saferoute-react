@@ -1,0 +1,68 @@
+.incident-card {
+    padding: 20px;
+}
+
+.incident-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.incident-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.incident-location {
+    color: var(--slate-500);
+    font-size: 0.85rem;
+    margin-top: 2px;
+}
+
+.dark .incident-location {
+    color: var(--slate-400);
+}
+
+.incident-type {
+    color: var(--slate-500);
+    font-size: 0.85rem;
+    margin-top: 8px;
+    font-style: italic;
+}
+
+.dark .incident-type {
+    color: var(--slate-400);
+}
+
+.incident-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.stat-mini-label {
+    font-size: 0.75rem;
+    color: var(--slate-500);
+}
+
+.dark .stat-mini-label {
+    color: var(--slate-400);
+}
+
+.stat-mini-value {
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+.incident-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--slate-200);
+}
+
+.dark .incident-actions {
+    border-color: var(--slate-700);
+}

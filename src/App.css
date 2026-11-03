@@ -1,0 +1,164 @@
+/* App Layout */
+.app {
+  min-height: 100vh;
+}
+
+/* Areas Section */
+.areas-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.areas-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.areas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+@media (max-width: 1024px) {
+  .areas-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* FAB */
+.fab-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 50;
+}
+
+.fab {
+  padding: 14px 20px;
+  border-radius: 50px;
+  border: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+  color: white;
+}
+
+.fab:hover {
+  transform: translateY(-2px);
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+.fab-hazard {
+  background: #eab308;
+  box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+}
+
+.fab-hazard:hover {
+  background: #facc15;
+}
+
+.fab-sos {
+  background: #dc2626;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+  font-size: 1.1rem;
+}
+
+.fab-sos:hover {
+  background: #ef4444;
+}
+
+/* SOS Links */
+.sos-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.sos-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--slate-100);
+  text-decoration: none;
+  color: inherit;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.dark .sos-link {
+  background: var(--slate-800);
+}
+
+.sos-link:hover {
+  background: var(--slate-200);
+}
+
+.dark .sos-link:hover {
+  background: var(--slate-700);
+}
+
+.sos-icon {
+  font-size: 1.5rem;
+}
+
+.sos-text {
+  font-size: 1rem;
+}
+
+/* Modal Description */
+.modal-description {
+  color: var(--slate-500);
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+/* Hazard Form */
+.hazard-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.hazard-form label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.file-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--slate-300);
+  border-radius: 12px;
+  background: var(--slate-50);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.dark .file-input {
+  background: var(--slate-800);
+  border-color: var(--slate-700);
+  color: var(--slate-300);
+}

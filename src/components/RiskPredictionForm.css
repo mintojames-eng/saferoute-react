@@ -1,0 +1,155 @@
+.text-center {
+    text-align: center;
+}
+
+.risk-form-card {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px;
+}
+
+.risk-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 768px) {
+    .risk-form {
+        grid-template-columns: 1fr;
+    }
+}
+
+.risk-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-submit {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding-top: 16px;
+}
+
+/* Risk Result */
+.risk-result {
+    margin-top: 40px;
+    padding: 24px;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+    border-radius: 16px;
+}
+
+.dark .risk-result {
+    background: var(--slate-800);
+    border-color: var(--slate-600);
+}
+
+.risk-result-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.risk-result-label {
+    color: var(--slate-500);
+    font-size: 0.85rem;
+}
+
+.risk-result-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-top: 8px;
+}
+
+.risk-result-message {
+    color: var(--slate-600);
+    margin-top: 12px;
+}
+
+.dark .risk-result-message {
+    color: var(--slate-300);
+}
+
+.risk-score-display {
+    text-align: center;
+}
+
+.risk-score-value {
+    font-size: 3rem;
+    font-weight: 800;
+}
+
+.risk-score-label {
+    color: var(--slate-500);
+}
+
+/* Risk Bar */
+.risk-bar-container {
+    margin-top: 24px;
+}
+
+.risk-bar-track {
+    width: 100%;
+    height: 12px;
+    background: var(--slate-200);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.dark .risk-bar-track {
+    background: var(--slate-700);
+}
+
+.risk-bar-fill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 1s ease-out;
+}
+
+/* Risk Recommendation */
+.risk-recommendation {
+    margin-top: 32px;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: rgba(6, 182, 212, 0.05);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+.risk-rec-icon {
+    background: #cffafe;
+    color: #0891b2;
+    padding: 12px;
+    border-radius: 50%;
+}
+
+.dark .risk-rec-icon {
+    background: rgba(8, 145, 178, 0.2);
+    color: #22d3ee;
+}
+
+.risk-rec-content {
+    flex: 1;
+}
+
+.risk-rec-content h4 {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.risk-rec-content p {
+    color: var(--slate-600);
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.dark .risk-rec-content p {
+    color: var(--slate-300);
+}

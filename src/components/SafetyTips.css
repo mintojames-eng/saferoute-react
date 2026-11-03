@@ -1,0 +1,28 @@
+.safety-tip-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 24px;
+}
+
+.tip-icon {
+    font-size: 2.2rem;
+    line-height: 1;
+}
+
+.tip-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.tip-description {
+    font-size: 0.95rem;
+    color: var(--slate-600);
+    line-height: 1.5;
+}
+
+.dark .tip-description {
+    color: var(--slate-300);
+}
+
