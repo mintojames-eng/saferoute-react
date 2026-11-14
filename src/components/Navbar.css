@@ -20,6 +20,7 @@
     gap: 12px;
     text-decoration: none;
     color: white;
+    cursor: pointer;
 }
 
 .logo-icon {
@@ -46,42 +47,148 @@
 .desktop-nav ul {
     display: flex;
     align-items: center;
-    gap: 32px;
+    gap: 20px;
     list-style: none;
 }
 
-.nav-link {
-    color: white;
-    text-decoration: none;
+.nav-btn-link {
+    background: transparent;
+    border: none;
+    color: var(--slate-300);
     font-size: 0.9rem;
-    font-weight: 500;
-    transition: color 0.2s;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.nav-link:hover {
-    color: #22d3ee;
+.nav-btn-link:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-btn-link.active {
+    color: var(--cyan-400);
+    background: rgba(6, 182, 212, 0.12);
+}
+
+.alert-nav-link {
+    position: relative;
+}
+
+.navbar-alert-badge {
+    background: #ef4444;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 9999px;
+    animation: alert-ping 2s infinite;
+}
+
+@keyframes alert-ping {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
 }
 
 .dark-toggle {
-    background: none;
+    background: rgba(255, 255, 255, 0.1);
     border: none;
     color: white;
-    cursor: pointer;
     padding: 8px;
-    border-radius: 50%;
+    border-radius: 10px;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    transition: background 0.2s;
+    justify-content: center;
+    transition: all 0.2s;
 }
 
 .dark-toggle:hover {
-    background: var(--slate-800);
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(15deg);
+}
+
+/* User Group */
+.navbar-user-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-user-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 5px 12px 5px 6px;
+    border-radius: 9999px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nav-user-pill:hover,
+.nav-user-pill.active {
+    background: rgba(6, 182, 212, 0.2);
+    border-color: var(--cyan-400);
+}
+
+.navbar-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--cyan-500);
+}
+
+.navbar-user-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.navbar-user-score {
+    font-size: 0.7rem;
+    font-weight: 800;
+    background: #10b981;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 9999px;
+}
+
+.nav-logout-btn {
+    background: transparent;
+    border: none;
+    color: var(--slate-400);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.nav-logout-btn:hover {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.nav-signin-btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    border-radius: 10px;
 }
 
 /* Mobile */
 .mobile-menu-btn {
     display: none;
-    background: none;
+    background: transparent;
     border: none;
     color: white;
     font-size: 1.5rem;
@@ -91,21 +198,38 @@
 .mobile-nav {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding-bottom: 20px;
-    font-size: 0.9rem;
+    gap: 12px;
+    padding: 20px 0 24px;
+    border-top: 1px solid var(--slate-800);
 }
 
-.mobile-nav a {
+.mobile-nav button {
+    background: transparent;
+    border: none;
     color: var(--slate-300);
-    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
-.mobile-nav a:hover {
+.mobile-nav button:hover {
+    background: rgba(255, 255, 255, 0.08);
     color: white;
 }
 
-@media (max-width: 768px) {
+.mobile-user-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--slate-800);
+}
+
+@media (max-width: 992px) {
     .desktop-nav {
         display: none;
     }

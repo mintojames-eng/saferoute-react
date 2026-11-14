@@ -162,3 +162,70 @@
   border-color: var(--slate-700);
   color: var(--slate-300);
 }
+
+/* Feature View Shortcuts */
+.view-shortcuts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .view-shortcuts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.shortcut-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border-left: 4px solid var(--cyan-500);
+}
+
+.shortcut-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(6, 182, 212, 0.15);
+  border-left-color: var(--indigo-600);
+}
+
+.shortcut-icon {
+  font-size: 2rem;
+  background: rgba(6, 182, 212, 0.1);
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shortcut-card h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.shortcut-card p {
+  font-size: 0.8rem;
+  color: var(--slate-500);
+}
+
+.dark .shortcut-card p {
+  color: var(--slate-400);
+}
+
+.shortcut-arrow {
+  margin-left: auto;
+  font-size: 1.3rem;
+  color: var(--slate-400);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.shortcut-card:hover .shortcut-arrow {
+  transform: translateX(4px);
+  color: var(--cyan-500);
+}

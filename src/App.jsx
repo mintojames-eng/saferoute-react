@@ -14,12 +14,33 @@ import RoadConditions from './components/RoadConditions'
 import SafetyTips from './components/SafetyTips'
 import Footer from './components/Footer'
 import Toast from './components/Toast'
+import AuthModal from './components/AuthModal'
+import RiskDashboard from './components/RiskDashboard'
+import SafetyAlerts from './components/SafetyAlerts'
+import UserProfile from './components/UserProfile'
 import { defaultIncidents, defaultStats } from './data/defaultIncidents'
+import { defaultUser, initialSafetyAlerts } from './data/mockData'
 
 const API_URL = 'http://localhost:3001'
 
 function App() {
-  // ── State Management with useState ──
+  // ── Navigation & Views State ──
+  const [activeView, setActiveView] = useState('home') // 'home' | 'risk-dashboard' | 'alerts' | 'profile'
+  const [showAuthModal, setShowAuthModal] = useState(false)
+
+  // ── User Authentication State ──
+  const [currentUser, setCurrentUser] = useState(() => {
+    const saved = localStorage.getItem('saferoute_current_user')
+    return saved ? JSON.parse(saved) : defaultUser
+  })
+
+  // ── Safety Alerts State ──
+  const [safetyAlerts, setSafetyAlerts] = useState(() => {
+    const saved = localStorage.getItem('saferoute_alerts')
+    return saved ? JSON.parse(saved) : initialSafetyAlerts
+  })
+
+  // ── Incident CRUD & Core State ──
   const [incidents, setIncidents] = useState([])
   const [dashboardStats, setDashboardStats] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -186,6 +207,72 @@ function App() {
     showToast('Deleted', `"${incident?.name}" has been removed.`)
   }
 
+  // ── Auth Handlers ──
+  const handleAuthSuccess = (user) => {
+    setCurrentUser(user)
+    localStorage.setItem('saferoute_current_user', JSON.stringify(user))
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('saferoute_current_user')
+    setCurrentUser(null)
+    setActiveView('home')
+    showToast('Signed Out', 'You have been signed out of your account.')
+  }
+
+  const handleUpdateUser = (updatedUser) => {
+    setCurrentUser(updatedUser)
+    localStorage.setItem('saferoute_current_user', JSON.stringify(updatedUser))
+
+    // Also update in users list if present
+    const users = JSON.parse(localStorage.getItem('saferoute_users') || '[]')
+    const updatedUsers = users.map(u => u.id === updatedUser.id ? updatedUser : u)
+    localStorage.setItem('saferoute_users', JSON.stringify(updatedUsers))
+  }
+
+  // ── Safety Alerts Handlers ──
+  const handleAddAlert = (newAlert) => {
+    setSafetyAlerts(prev => {
+      const updated = [newAlert, ...prev]
+      localStorage.setItem('saferoute_alerts', JSON.stringify(updated))
+      return updated
+    })
+  }
+
+  const handleVerifyAlert = (alertId) => {
+    setSafetyAlerts(prev => {
+      const updated = prev.map(alert => {
+        if (alert.id === alertId) {
+          const isVerified = !alert.isVerifiedByUser
+          return {
+            ...alert,
+            isVerifiedByUser: isVerified,
+            verifiedCount: isVerified ? alert.verifiedCount + 1 : Math.max(alert.verifiedCount - 1, 0)
+          }
+        }
+        return alert
+      })
+      localStorage.setItem('saferoute_alerts', JSON.stringify(updated))
+      return updated
+    })
+    showToast('Hazard Verification', 'Thank you for verifying this road hazard condition.')
+  }
+
+  // ── Save Route from Risk Dashboard to User Profile ──
+  const handleSaveRouteToProfile = (newRoute) => {
+    if (!currentUser) {
+      setShowAuthModal(true)
+      showToast('Authentication Needed', 'Please sign in to save routes to your profile.', true)
+      return
+    }
+    const currentRoutes = currentUser.savedRoutes || []
+    const updatedUser = {
+      ...currentUser,
+      savedRoutes: [newRoute, ...currentRoutes]
+    }
+    handleUpdateUser(updatedUser)
+  }
+
   // ── Event Handlers ──
   const handleEdit = (incident) => {
     setEditingIncident(incident)
@@ -227,67 +314,150 @@ function App() {
       {/* Toast Notifications */}
       <Toast toasts={toasts} onDismiss={dismissToast} />
 
-      {/* Header */}
+      {/* Navigation Bar */}
       <Navbar
         darkMode={darkMode}
         onToggleDarkMode={() => setDarkMode(!darkMode)}
+        activeView={activeView}
+        setActiveView={setActiveView}
+        currentUser={currentUser}
+        onOpenAuth={() => setShowAuthModal(true)}
+        onLogout={handleLogout}
+        unreadAlertsCount={safetyAlerts.length}
       />
 
       <main>
-        {/* Hero Section */}
-        <HeroSection stats={computedStats} />
+        {/* VIEW 1: DEDICATED RISK PREDICTION DASHBOARD */}
+        {activeView === 'risk-dashboard' && (
+          <RiskDashboard
+            showToast={showToast}
+            onSaveRoute={handleSaveRouteToProfile}
+          />
+        )}
 
-        {/* Dashboard Statistics */}
-        <DashboardStats stats={computedStats} />
+        {/* VIEW 2: DEDICATED REAL-TIME SAFETY ALERTS */}
+        {activeView === 'alerts' && (
+          <SafetyAlerts
+            alerts={safetyAlerts}
+            onAddAlert={handleAddAlert}
+            onVerifyAlert={handleVerifyAlert}
+            showToast={showToast}
+          />
+        )}
 
-        {/* Charts */}
-        <Charts stats={computedStats} />
+        {/* VIEW 3: DEDICATED USER PROFILE */}
+        {activeView === 'profile' && (
+          currentUser ? (
+            <UserProfile
+              user={currentUser}
+              onUpdateUser={handleUpdateUser}
+              onLogout={handleLogout}
+              showToast={showToast}
+            />
+          ) : (
+            <div className="container" style={{ padding: '80px 24px', textAlign: 'center' }}>
+              <h2>Please Sign In</h2>
+              <p style={{ margin: '16px 0 24px', color: 'var(--slate-500)' }}>
+                You must be logged in to view and manage your SafeRoute commuter profile.
+              </p>
+              <button className="btn btn-primary" onClick={() => setShowAuthModal(true)}>
+                Sign In or Register Now →
+              </button>
+            </div>
+          )
+        )}
 
-        {/* Risk Prediction Form */}
-        <RiskPredictionForm showToast={showToast} />
+        {/* VIEW 4: HOME / OVERVIEW & HOTSPOTS EXPLORER */}
+        {activeView === 'home' && (
+          <>
+            {/* Hero Section */}
+            <HeroSection stats={computedStats} />
 
-        {/* Accident Prone Areas */}
-        <section id="areas" className="section">
-          <div className="container">
-            <div className="areas-header">
-              <div>
-                <p className="section-label" style={{ color: '#dc2626' }}>ACCIDENT HOTSPOTS</p>
-                <h2 className="section-title">Historical Blackspot Clusters</h2>
-                <p className="section-subtitle">
-                  Areas with higher historical accident activity and road safety concerns.
-                </p>
-              </div>
-              <div className="areas-actions">
-                <SearchBar
-                  searchTerm={searchTerm}
-                  onSearchChange={setSearchTerm}
-                />
-                <button className="btn btn-primary" onClick={handleAddNew}>
-                  + Add Incident
-                </button>
+            {/* View Shortcuts Banner */}
+            <div className="container" style={{ marginBottom: '32px' }}>
+              <div className="view-shortcuts-grid">
+                <div className="shortcut-card card" onClick={() => setActiveView('risk-dashboard')}>
+                  <div className="shortcut-icon">📊</div>
+                  <div>
+                    <h4>Neural Risk Dashboard</h4>
+                    <p>Adjust weather and traffic density simulators</p>
+                  </div>
+                  <span className="shortcut-arrow">→</span>
+                </div>
+
+                <div className="shortcut-card card" onClick={() => setActiveView('alerts')}>
+                  <div className="shortcut-icon">🔔</div>
+                  <div>
+                    <h4>Live Safety Alerts ({safetyAlerts.length})</h4>
+                    <p>Real-time community flood & collision radar</p>
+                  </div>
+                  <span className="shortcut-arrow">→</span>
+                </div>
+
+                <div className="shortcut-card card" onClick={() => currentUser ? setActiveView('profile') : setShowAuthModal(true)}>
+                  <div className="shortcut-icon">👤</div>
+                  <div>
+                    <h4>{currentUser ? 'My Profile & Commutes' : 'Commuter Identity'}</h4>
+                    <p>{currentUser ? `${currentUser.savedRoutes?.length || 0} saved routes & ICE settings` : 'Sign in to access driver profile'}</p>
+                  </div>
+                  <span className="shortcut-arrow">→</span>
+                </div>
               </div>
             </div>
 
-            <div className="areas-grid">
-              {/* Interactive Map */}
-              <IncidentMap incidents={filteredIncidents} />
+            {/* Dashboard Statistics */}
+            <DashboardStats stats={computedStats} />
 
-              {/* Incident Cards List */}
-              <IncidentList
-                incidents={filteredIncidents}
-                loading={loading}
-                onEdit={handleEdit}
-                onDelete={deleteIncident}
-              />
-            </div>
-          </div>
-        </section>
+            {/* Charts */}
+            <Charts stats={computedStats} />
 
-        {/* Road Conditions */}
-        <RoadConditions />
+            {/* Risk Prediction Form */}
+            <RiskPredictionForm showToast={showToast} />
 
-        {/* Safety Recommendations */}
-        <SafetyTips />
+            {/* Accident Prone Areas */}
+            <section id="areas" className="section">
+              <div className="container">
+                <div className="areas-header">
+                  <div>
+                    <p className="section-label" style={{ color: '#dc2626' }}>ACCIDENT HOTSPOTS</p>
+                    <h2 className="section-title">Historical Blackspot Clusters</h2>
+                    <p className="section-subtitle">
+                      Areas with higher historical accident activity and road safety concerns.
+                    </p>
+                  </div>
+                  <div className="areas-actions">
+                    <SearchBar
+                      searchTerm={searchTerm}
+                      onSearchChange={setSearchTerm}
+                    />
+                    <button className="btn btn-primary" onClick={handleAddNew}>
+                      + Add Incident
+                    </button>
+                  </div>
+                </div>
+
+                <div className="areas-grid">
+                  {/* Interactive Map */}
+                  <IncidentMap incidents={filteredIncidents} />
+
+                  {/* Incident Cards List */}
+                  <IncidentList
+                    incidents={filteredIncidents}
+                    loading={loading}
+                    onEdit={handleEdit}
+                    onDelete={deleteIncident}
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Road Conditions */}
+            <RoadConditions />
+
+            {/* Safety Recommendations */}
+            <SafetyTips />
+          </>
+        )}
       </main>
 
       {/* Footer */}
@@ -302,6 +472,14 @@ function App() {
           🚨 SOS
         </button>
       </div>
+
+      {/* Auth Modal (Login & Signup) */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onAuthSuccess={handleAuthSuccess}
+        showToast={showToast}
+      />
 
       {/* CRUD Form Modal */}
       <Modal
