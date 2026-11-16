@@ -217,6 +217,56 @@ auto_seed_mongodb()
 
 # ── REST API ROUTES (Connected to MongoDB) ──
 
+@app.route('/', methods=['GET'])
+def root_index():
+    areas_count = db['bangalore_areas'].count_documents({}) if mongo_connected and db is not None else len(BANGALORE_AREAS_MASTER)
+    incidents_count = db['incidents'].count_documents({}) if mongo_connected and db is not None else 19
+    return f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>SafeRoute AI Backend</title>
+        <style>
+            body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; margin: 0; line-height: 1.6; }}
+            .container {{ max-width: 750px; margin: 0 auto; background: #1e293b; padding: 36px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); }}
+            h1 {{ color: #38bdf8; margin-top: 8px; }}
+            .badge {{ display: inline-block; background: #10b981; color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.85rem; font-weight: 600; }}
+            .links {{ display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }}
+            .links a {{ background: #0284c7; color: white; padding: 8px 14px; border-radius: 8px; text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: background 0.2s; }}
+            .links a:hover {{ background: #0369a1; }}
+            .btn-ui {{ display: block; text-align: center; background: #0891b2; color: white; padding: 14px; border-radius: 10px; font-weight: bold; font-size: 1.05rem; text-decoration: none; margin-top: 20px; box-shadow: 0 4px 15px rgba(8,145,178,0.4); }}
+            .btn-ui:hover {{ background: #0e7490; }}
+            code {{ background: #334155; padding: 2px 6px; border-radius: 4px; color: #38bdf8; font-size: 0.9em; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <span class="badge">🍃 MongoDB Connected</span>
+            <h1>SafeRoute AI Backend Server</h1>
+            <p>The backend REST API server is running live on port <code>5000</code>.</p>
+            <p><strong>Database:</strong> MongoDB <code>saferoute</code> on <code>localhost:27017</code><br>
+            <strong>Active Records:</strong> {areas_count} Bangalore localities & {incidents_count} blackspot clusters</p>
+            
+            <h3>Available API Endpoints:</h3>
+            <div class="links">
+                <a href="/status" target="_blank">GET /status</a>
+                <a href="/bangalore-areas" target="_blank">GET /bangalore-areas (55+)</a>
+                <a href="/bangalore-areas?zone=East" target="_blank">GET /bangalore-areas?zone=East</a>
+                <a href="/incidents" target="_blank">GET /incidents</a>
+                <a href="/alerts" target="_blank">GET /alerts</a>
+                <a href="/dashboardStats" target="_blank">GET /dashboardStats</a>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #334155; margin: 24px 0;">
+
+            <h3>Looking for the Full SafeRoute UI?</h3>
+            <p>Run <code>npm run dev</code> inside <code>saferoute-react</code> in another terminal, then click below:</p>
+            <a class="btn-ui" href="http://localhost:5173" target="_blank">Open SafeRoute React UI (http://localhost:5173) &rarr;</a>
+        </div>
+    </body>
+    </html>
+    """
+
 @app.route('/status', methods=['GET'])
 def get_status():
     stats = {}
