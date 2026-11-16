@@ -153,3 +153,55 @@
 .dark .risk-rec-content p {
     color: var(--slate-300);
 }
+
+/* Quick Route Preset Banner */
+.quick-routes-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.quick-routes-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--slate-400, #94a3b8);
+    letter-spacing: 0.05em;
+    margin-right: 4px;
+}
+
+.quick-route-chip {
+    background: rgba(8, 145, 178, 0.12);
+    border: 1px solid rgba(8, 145, 178, 0.3);
+    color: #38bdf8;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quick-route-chip:hover {
+    background: #0891b2;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
+}
+
+.risk-form select optgroup {
+    background: #0f172a;
+    color: #38bdf8;
+    font-weight: 700;
+    padding: 6px 0;
+}
+
+.risk-form select option {
+    background: #1e293b;
+    color: #e2e8f0;
+    font-weight: normal;
+    padding: 6px 8px;
+}
