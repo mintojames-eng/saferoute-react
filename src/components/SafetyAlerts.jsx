@@ -263,3 +263,4 @@ function SafetyAlerts({ alerts, onAddAlert, onVerifyAlert, showToast }) {
 }
 
 export default SafetyAlerts
+

@@ -114,6 +114,36 @@
     transform: rotate(15deg);
 }
 
+/* MongoDB Pill */
+.navbar-mongo-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #34d399;
+    padding: 5px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.mongo-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+}
+
+.mongo-dot.online {
+    background-color: #10b981;
+    box-shadow: 0 0 8px #10b981;
+}
+
+.mongo-dot.offline {
+    background-color: #94a3b8;
+}
+
 /* User Group */
 .navbar-user-group {
     display: flex;

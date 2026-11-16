@@ -186,3 +186,4 @@ export const routeComparisonData = [
         highlights: ['Multiple signal snarls', 'Narrow unlit sections', '5 active accident blackspots']
     }
 ]
+

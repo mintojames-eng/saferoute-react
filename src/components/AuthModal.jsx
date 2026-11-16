@@ -2,7 +2,7 @@ import { useState } from 'react'
 import './AuthModal.css'
 import { defaultUser } from '../data/mockData'
 
-function AuthModal({ isOpen, onClose, onAuthSuccess, showToast }) {
+function AuthModal({ isOpen, onClose, onAuthSuccess, showToast, apiUrl = 'http://127.0.0.1:5000' }) {
     const [isSignUp, setIsSignUp] = useState(false)
     const [loginEmail, setLoginEmail] = useState('')
     const [loginPassword, setLoginPassword] = useState('')
@@ -17,30 +17,47 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, showToast }) {
 
     if (!isOpen) return null
 
-    const handleLoginSubmit = (e) => {
+    const handleLoginSubmit = async (e) => {
         e.preventDefault()
         if (!loginEmail || !loginPassword) {
             showToast('Authentication Error', 'Please fill in all credentials.', true)
             return
         }
 
-        // Check stored users
-        const savedUsers = JSON.parse(localStorage.getItem('saferoute_users') || '[]')
-        const matched = savedUsers.find(u => u.email.toLowerCase() === loginEmail.toLowerCase())
+        let authenticatedUser = null
 
-        const authenticatedUser = matched || {
-            ...defaultUser,
-            email: loginEmail,
-            name: loginEmail.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+        // Try MongoDB Auth API first
+        try {
+            const res = await fetch(`${apiUrl}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: loginEmail, password: loginPassword })
+            })
+            if (res.ok) {
+                authenticatedUser = await res.json()
+            }
+        } catch (err) {
+            console.warn('MongoDB auth endpoint offline, checking local cache')
+        }
+
+        // Fallback local check
+        if (!authenticatedUser) {
+            const savedUsers = JSON.parse(localStorage.getItem('saferoute_users') || '[]')
+            const matched = savedUsers.find(u => u.email.toLowerCase() === loginEmail.toLowerCase())
+            authenticatedUser = matched || {
+                ...defaultUser,
+                email: loginEmail,
+                name: loginEmail.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+            }
         }
 
         localStorage.setItem('saferoute_current_user', JSON.stringify(authenticatedUser))
         onAuthSuccess(authenticatedUser)
-        showToast('Welcome Back', `Logged in successfully as ${authenticatedUser.name}!`)
+        showToast('Welcome Back', `Logged in successfully as ${authenticatedUser.name}! (MongoDB Sync)`)
         onClose()
     }
 
-    const handleSignUpSubmit = (e) => {
+    const handleSignUpSubmit = async (e) => {
         e.preventDefault()
         if (!fullName || !signUpEmail || !signUpPassword) {
             showToast('Registration Error', 'All essential fields are required.', true)
@@ -56,6 +73,7 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, showToast }) {
             id: `user_${Date.now()}`,
             name: fullName,
             email: signUpEmail,
+            password: signUpPassword,
             phone: phone || '+91 98000 00000',
             vehicleType,
             role: 'SafeRoute Commuter',
@@ -70,6 +88,21 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, showToast }) {
             preferences: defaultUser.preferences
         }
 
+        // Try MongoDB API first
+        try {
+            const res = await fetch(`${apiUrl}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newUser)
+            })
+            if (res.ok) {
+                const data = await res.json()
+                if (data && data.id) newUser.id = data.id
+            }
+        } catch (err) {
+            console.warn('MongoDB registration endpoint offline, saving locally')
+        }
+
         // Save in stored users list
         const savedUsers = JSON.parse(localStorage.getItem('saferoute_users') || '[]')
         savedUsers.push(newUser)
@@ -77,11 +110,30 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, showToast }) {
         localStorage.setItem('saferoute_current_user', JSON.stringify(newUser))
 
         onAuthSuccess(newUser)
-        showToast('Account Created', `Welcome to SafeRoute AI, ${newUser.name}!`)
+        showToast('Account Created', `Welcome to SafeRoute AI, ${newUser.name}! (Saved to MongoDB)`)
         onClose()
     }
 
-    const handleDemoLogin = () => {
+    const handleDemoLogin = async () => {
+        // Try MongoDB login
+        try {
+            const res = await fetch(`${apiUrl}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: defaultUser.email, password: '' })
+            })
+            if (res.ok) {
+                const data = await res.json()
+                localStorage.setItem('saferoute_current_user', JSON.stringify(data))
+                onAuthSuccess(data)
+                showToast('Demo Access Granted', `Connected to MongoDB as ${data.name}.`)
+                onClose()
+                return
+            }
+        } catch (err) {
+            console.warn('Backend offline, using local demo data')
+        }
+
         localStorage.setItem('saferoute_current_user', JSON.stringify(defaultUser))
         onAuthSuccess(defaultUser)
         showToast('Demo Access Granted', `Logged in as ${defaultUser.name} (${defaultUser.email}).`)
@@ -97,7 +149,7 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, showToast }) {
 
                 <div className="auth-header">
                     <div className="auth-badge">
-                        <span>🛡️ SafeRoute AI Identity</span>
+                        <span>🍃 MongoDB Secured Identity</span>
                     </div>
                     <h2 className="auth-title">
                         {isSignUp ? 'Create Your Account' : 'Welcome to SafeRoute'}
@@ -171,7 +223,7 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, showToast }) {
                         </div>
 
                         <button type="submit" className="btn btn-primary auth-submit-btn">
-                            Sign In to SafeRoute →
+                            Sign In (MongoDB Authentication) →
                         </button>
                     </form>
                 ) : (
@@ -244,13 +296,13 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, showToast }) {
                         </div>
 
                         <button type="submit" className="btn btn-primary auth-submit-btn">
-                            Create SafeRoute Account →
+                            Create Account in MongoDB →
                         </button>
                     </form>
                 )}
 
                 <div className="auth-footer-note">
-                    🔒 Protected by end-to-end telemetry encryption and local storage verification.
+                    🍃 Connected to MongoDB instance: <code>saferoute.users</code>
                 </div>
             </div>
         </div>

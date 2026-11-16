@@ -543,3 +543,4 @@ function UserProfile({ user, onUpdateUser, onLogout, showToast }) {
 }
 
 export default UserProfile
+

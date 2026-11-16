@@ -9,7 +9,8 @@ function Navbar({
     currentUser,
     onOpenAuth,
     onLogout,
-    unreadAlertsCount = 0
+    unreadAlertsCount = 0,
+    mongoStatus = { connected: true, label: '🍃 MongoDB' }
 }) {
     const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -92,6 +93,19 @@ function Navbar({
                                     Safety Tips
                                 </button>
                             </li>
+
+                            {/* MongoDB Status Indicator */}
+                            {mongoStatus && (
+                                <li>
+                                    <span
+                                        className="navbar-mongo-pill"
+                                        title={mongoStatus.connected ? "Connected to MongoDB Database: saferoute" : "MongoDB Offline"}
+                                    >
+                                        <span className={`mongo-dot ${mongoStatus.connected ? 'online' : 'offline'}`}></span>
+                                        {mongoStatus.label}
+                                    </span>
+                                </li>
+                            )}
 
                             {/* Dark Mode Switcher */}
                             <li>

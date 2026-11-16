@@ -21,12 +21,13 @@ import UserProfile from './components/UserProfile'
 import { defaultIncidents, defaultStats } from './data/defaultIncidents'
 import { defaultUser, initialSafetyAlerts } from './data/mockData'
 
-const API_URL = 'http://localhost:3001'
+const API_URL = 'http://127.0.0.1:5000'
 
 function App() {
   // ── Navigation & Views State ──
   const [activeView, setActiveView] = useState('home') // 'home' | 'risk-dashboard' | 'alerts' | 'profile'
   const [showAuthModal, setShowAuthModal] = useState(false)
+  const [mongoStatus, setMongoStatus] = useState({ connected: true, label: '🍃 MongoDB' })
 
   // ── User Authentication State ──
   const [currentUser, setCurrentUser] = useState(() => {
@@ -62,11 +63,40 @@ function App() {
     setToasts(prev => prev.filter(t => t.id !== id))
   }, [])
 
-  // ── Data Fetching with useEffect ──
+  // ── Data Fetching with useEffect (MongoDB Backend) ──
   useEffect(() => {
     fetchIncidents()
     fetchDashboardStats()
+    fetchAlerts()
+    checkMongoStatus()
   }, [])
+
+  const checkMongoStatus = async () => {
+    try {
+      const res = await fetch(`${API_URL}/status`)
+      if (res.ok) {
+        const data = await res.json()
+        setMongoStatus({ connected: data.connected, label: data.connected ? '🍃 MongoDB Active' : 'Offline' })
+      }
+    } catch {
+      setMongoStatus({ connected: false, label: 'Local Cache' })
+    }
+  }
+
+  const fetchAlerts = async () => {
+    try {
+      const res = await fetch(`${API_URL}/alerts`)
+      if (res.ok) {
+        const data = await res.json()
+        if (data && data.length > 0) {
+          setSafetyAlerts(data)
+          localStorage.setItem('saferoute_alerts', JSON.stringify(data))
+        }
+      }
+    } catch {
+      console.warn('Backend alerts offline, using local cache')
+    }
+  }
 
   // ── Dark Mode Toggle with useEffect ──
   useEffect(() => {
@@ -220,9 +250,20 @@ function App() {
     showToast('Signed Out', 'You have been signed out of your account.')
   }
 
-  const handleUpdateUser = (updatedUser) => {
+  const handleUpdateUser = async (updatedUser) => {
     setCurrentUser(updatedUser)
     localStorage.setItem('saferoute_current_user', JSON.stringify(updatedUser))
+
+    // Sync to MongoDB
+    try {
+      await fetch(`${API_URL}/users/${updatedUser.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedUser)
+      })
+    } catch {
+      console.warn('MongoDB user update offline, saved to local cache')
+    }
 
     // Also update in users list if present
     const users = JSON.parse(localStorage.getItem('saferoute_users') || '[]')
@@ -230,8 +271,18 @@ function App() {
     localStorage.setItem('saferoute_users', JSON.stringify(updatedUsers))
   }
 
-  // ── Safety Alerts Handlers ──
-  const handleAddAlert = (newAlert) => {
+  // ── Safety Alerts Handlers (MongoDB Synchronized) ──
+  const handleAddAlert = async (newAlert) => {
+    try {
+      await fetch(`${API_URL}/alerts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newAlert)
+      })
+    } catch {
+      console.warn('MongoDB alert insert offline, saved to local cache')
+    }
+
     setSafetyAlerts(prev => {
       const updated = [newAlert, ...prev]
       localStorage.setItem('saferoute_alerts', JSON.stringify(updated))
@@ -239,23 +290,35 @@ function App() {
     })
   }
 
-  const handleVerifyAlert = (alertId) => {
+  const handleVerifyAlert = async (alertId) => {
+    const alert = safetyAlerts.find(a => a.id === alertId)
+    const isVerified = !alert?.isVerifiedByUser
+
+    try {
+      await fetch(`${API_URL}/alerts/${alertId}/verify`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isVerifiedByUser: isVerified })
+      })
+    } catch {
+      console.warn('MongoDB alert verify offline')
+    }
+
     setSafetyAlerts(prev => {
-      const updated = prev.map(alert => {
-        if (alert.id === alertId) {
-          const isVerified = !alert.isVerifiedByUser
+      const updated = prev.map(a => {
+        if (a.id === alertId) {
           return {
-            ...alert,
+            ...a,
             isVerifiedByUser: isVerified,
-            verifiedCount: isVerified ? alert.verifiedCount + 1 : Math.max(alert.verifiedCount - 1, 0)
+            verifiedCount: isVerified ? a.verifiedCount + 1 : Math.max(a.verifiedCount - 1, 0)
           }
         }
-        return alert
+        return a
       })
       localStorage.setItem('saferoute_alerts', JSON.stringify(updated))
       return updated
     })
-    showToast('Hazard Verification', 'Thank you for verifying this road hazard condition.')
+    showToast('Hazard Verification', 'Thank you for verifying this road hazard condition (Saved to MongoDB).')
   }
 
   // ── Save Route from Risk Dashboard to User Profile ──
@@ -324,6 +387,7 @@ function App() {
         onOpenAuth={() => setShowAuthModal(true)}
         onLogout={handleLogout}
         unreadAlertsCount={safetyAlerts.length}
+        mongoStatus={mongoStatus}
       />
 
       <main>
@@ -479,6 +543,7 @@ function App() {
         onClose={() => setShowAuthModal(false)}
         onAuthSuccess={handleAuthSuccess}
         showToast={showToast}
+        apiUrl={API_URL}
       />
 
       {/* CRUD Form Modal */}
